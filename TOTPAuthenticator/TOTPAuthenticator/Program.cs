@@ -1,15 +1,27 @@
 ﻿/// <summary>
 /// <href="https://github.com/RobThree/TwoFactorAuth.Net"/>
 /// </summary>
+
+using Topshelf;
 namespace TOTPAuthenticator
 {
     public class Program
     {
         public static void Main(string[] _)
         {
-            var secretKey = "O26NAQVLNNOUUSFJ3UMY5JNDPPEFLZNV";
-            var tfa = new TOTP();
-            var code = tfa.GetCode(secretKey);
+            HostFactory.Run(x =>
+            {
+                x.Service<SophosVpnService>(s =>
+                {
+                    s.ConstructUsing(n => new SophosVpnService());
+                    s.WhenStarted(n => n.Start());
+                    s.WhenStopped(n => n.Stop());
+                });
+                x.SetServiceName("SophosVpnService");
+                x.SetDisplayName("SophosVpnService");
+                x.RunAsLocalSystem();
+                x.StartAutomatically();
+            });
         }
     }
 }
